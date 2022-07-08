@@ -4,10 +4,11 @@ import android.app.Activity;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.media.ExifInterface;
 import android.os.Environment;
 import android.util.Log;
 import android.util.Pair;
+
+import androidx.exifinterface.media.ExifInterface;
 
 import com.facebook.react.bridge.Promise;
 import com.facebook.react.bridge.ReadableMap;
@@ -19,6 +20,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Locale;
 import java.util.UUID;
 
 /**
@@ -114,8 +116,8 @@ class Compression {
         boolean useOriginalWidth = (maxWidth == null || maxWidth >= bitmapOptions.outWidth);
         boolean useOriginalHeight = (maxHeight == null || maxHeight >= bitmapOptions.outHeight);
 
-        List knownMimes = Arrays.asList("image/jpeg", "image/jpg", "image/png", "image/gif", "image/tiff");
-        boolean isKnownMimeType = (bitmapOptions.outMimeType != null && knownMimes.contains(bitmapOptions.outMimeType.toLowerCase()));
+        List<String> knownMimes = Arrays.asList("image/jpeg", "image/jpg", "image/png", "image/gif", "image/tiff");
+        boolean isKnownMimeType = (bitmapOptions.outMimeType != null && knownMimes.contains(bitmapOptions.outMimeType.toLowerCase(Locale.getDefault())));
 
         if (isLossLess && useOriginalWidth && useOriginalHeight && isKnownMimeType) {
             Log.d("image-crop-picker", "Skipping image compression");

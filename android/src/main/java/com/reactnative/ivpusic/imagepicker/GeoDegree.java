@@ -1,6 +1,6 @@
 package com.reactnative.ivpusic.imagepicker;
 
-import android.media.ExifInterface;
+import androidx.exifinterface.media.ExifInterface;
 
 public class GeoDegree {
     Float latitude;

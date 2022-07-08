@@ -34,7 +34,8 @@ class ResultCollector {
         }
     }
 
-    // if user has provided "multiple" option, we will wait for X number of result to come,
+    // if user has provided "multiple" option, we will wait for X number of result
+    // to come,
     // and also return result as an array
     synchronized void setWaitCount(int waitCount) {
         this.waitCount = waitCount;
@@ -44,19 +45,19 @@ class ResultCollector {
     synchronized private boolean isRequestValid() {
         if (resultSent) {
             Log.w("image-crop-picker", "Skipping result, already sent...");
-            return false;
+            return true;
         }
 
         if (promise == null) {
             Log.w("image-crop-picker", "Trying to notify success but promise is not set");
-            return false;
+            return true;
         }
 
-        return true;
+        return false;
     }
 
     synchronized void notifySuccess(WritableMap result) {
-        if (!isRequestValid()) {
+        if (isRequestValid()) {
             return;
         }
 
@@ -75,7 +76,7 @@ class ResultCollector {
     }
 
     synchronized void notifyProblem(String code, String message) {
-        if (!isRequestValid()) {
+        if (isRequestValid()) {
             return;
         }
 
@@ -85,7 +86,7 @@ class ResultCollector {
     }
 
     synchronized void notifyProblem(String code, Throwable throwable) {
-        if (!isRequestValid()) {
+        if (isRequestValid()) {
             return;
         }
 
