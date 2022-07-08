@@ -617,6 +617,23 @@ class PickerModule extends ReactContextBaseJavaModule implements ActivityEventLi
                 path = RealPathUtil.getRealPathFromURI(activity, uri);
             }
         }
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+
+            String externalCacheDirPath = Uri.fromFile(activity.getExternalCacheDir()).getPath();
+            String externalFilesDirPath = Uri.fromFile(activity.getExternalFilesDir(null)).getPath();
+            String cacheDirPath = Uri.fromFile(activity.getCacheDir()).getPath();
+            String FilesDirPath = Uri.fromFile(activity.getFilesDir()).getPath();
+
+            if (!path.startsWith(externalCacheDirPath)
+                    && !path.startsWith(externalFilesDirPath)
+                    && !path.startsWith(cacheDirPath)
+                    && !path.startsWith(FilesDirPath)) {
+                File copiedFile = this.createExternalStoragePrivateFile(activity, uri);
+                path = RealPathUtil.getRealPathFromURI(activity, Uri.fromFile(copiedFile));
+            }
+        }
+
         return path;
     }
 
