@@ -592,7 +592,23 @@ class PickerModule extends ReactContextBaseJavaModule implements ActivityEventLi
     private String resolveRealPath(Activity activity, Uri uri, boolean isCamera) {
         String path = "";
         String uriString = uri.toString();
-
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+            String externalCacheDirPath = Uri.fromFile(activity.getExternalCacheDir()).getPath();
+            String externalFilesDirPath = Uri.fromFile(activity.getExternalFilesDir(null)).getPath();
+            String cacheDirPath = Uri.fromFile(activity.getCacheDir()).getPath();
+            String filesDirPath = Uri.fromFile(activity.getFilesDir()).getPath();
+            if (!uriString.startsWith(externalCacheDirPath)
+                    && !uriString.startsWith(externalFilesDirPath)
+                    && !uriString.startsWith(cacheDirPath)
+                    && !uriString.startsWith(filesDirPath)) {
+                try {
+                    File copiedFile = this.createExternalStoragePrivateFile(activity, uri);
+                    path = RealPathUtil.getRealPathFromURI(activity, Uri.fromFile(copiedFile));
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        }
         if (path == "") {
             if (isCamera) {
                 Uri mediaUri = Uri.parse(mCurrentMediaPath);
@@ -601,23 +617,6 @@ class PickerModule extends ReactContextBaseJavaModule implements ActivityEventLi
                 path = RealPathUtil.getRealPathFromURI(activity, uri);
             }
         }
-
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-
-            String externalCacheDirPath = Uri.fromFile(activity.getExternalCacheDir()).getPath();
-            String externalFilesDirPath = Uri.fromFile(activity.getExternalFilesDir(null)).getPath();
-            String cacheDirPath = Uri.fromFile(activity.getCacheDir()).getPath();
-            String FilesDirPath = Uri.fromFile(activity.getFilesDir()).getPath();
-
-            if (!path.startsWith(externalCacheDirPath)
-                    && !path.startsWith(externalFilesDirPath)
-                    && !path.startsWith(cacheDirPath)
-                    && !path.startsWith(FilesDirPath)) {
-                File copiedFile = this.createExternalStoragePrivateFile(activity, uri);
-                path = RealPathUtil.getRealPathFromURI(activity, Uri.fromFile(copiedFile));
-            }
-        }
-
         return path;
     }
 
