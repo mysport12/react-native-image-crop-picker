@@ -735,7 +735,6 @@ RCT_EXPORT_METHOD(openCropper:(NSDictionary *)options
     
     if ([[[self options] objectForKey:@"cropping"] boolValue]) {
         self.croppingFile = [[NSMutableDictionary alloc] init];
-        self.croppingFile[@"sourceExif"] = exif;
         self.croppingFile[@"sourceURL"] = sourceURL;
         self.croppingFile[@"localIdentifier"] = localIdentifier;
         self.croppingFile[@"filename"] = filename;
@@ -817,15 +816,9 @@ RCT_EXPORT_METHOD(openCropper:(NSDictionary *)options
         return;
     }
     
-    NSMutableDictionary* exif = [[NSMutableDictionary alloc]init];
-    [exif addEntriesFromDictionary:self.croppingFile[@"sourceExif"]];
+    NSDictionary* exif = nil;
     if([[self.options objectForKey:@"includeExif"] boolValue]) {
-      NSDictionary *properties = [[CIImage imageWithData:imageResult.data] properties];
-      if (exif != nil) {
-        [exif addEntriesFromDictionary:properties];
-      } else {
-        NSDictionary *exif = properties;
-      }
+        exif = [[CIImage imageWithData:imageResult.data] properties];
     }
     
     [self dismissCropper:controller selectionDone:YES completion:[self waitAnimationEnd:^{
